@@ -102,17 +102,17 @@ def run(user_list_file, namespacefile, start, end, output_format):
     elif output_format == 'json':
         print(json.dumps(users_data))
     elif output_format == 'mediawiki':
-        click.echo('{| border="1"')
-        click.echo(' |+ Участник')
+        click.echo('{| class="wikitable"')
+        click.echo(' ! Участник')
         for namespace in namespaces:
-            click.echo(' |+ {}'.format(namespace))
-        click.echo(' |+ Сила голоса (автоматическая)')
-        click.echo(' |+ Сила голоса (итоговая)')
+            click.echo(' ! N{}'.format(namespace))
+        click.echo(' ! Сила голоса (автоматическая)')
+        click.echo(' ! Сила голоса (итоговая)')
         for user in users_data:
             click.echo(' |-')
-            click.echo(' | N{}'.format(user))
-            for key in user_data:
-                click.echo(' | {}'.format(user_data[key]))
+            click.echo(' | {}'.format(user))
+            for key in users_data[user]:
+                click.echo(' | {}'.format(users_data[user][key]))
             click.echo(' | ?')
         click.echo(' |}')
     else:
