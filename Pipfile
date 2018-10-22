@@ -1,15 +1,23 @@
 [[source]]
+
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+
 [packages]
+
 requests = "*"
+Click = "*"
+
 
 [dev-packages]
+
 pylint = "*"
 pycodestyle = "*"
 pydocstyle = "*"
 
+
 [requires]
+
 python_version = "3.7"
