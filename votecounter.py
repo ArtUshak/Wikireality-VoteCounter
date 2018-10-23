@@ -27,7 +27,7 @@ def get_user_contributions_count(user, start_date, end_date, namespace):
             'list': 'usercontribs',
             'uclimit': settings.api_uc_limit,
             'ucnamespace': namespace,
-            'ucuser': user,
+            'ucuser': user.replace(' ', '_'),
             'ucdir': 'newer',
             'format': 'json',
         }
@@ -55,7 +55,7 @@ def get_user_contributions_count(user, start_date, end_date, namespace):
 
 def read_user_data(input_file):
     """Read user list from text file."""
-    users = map(lambda s: s.strip().replace(' ', '_'), input_file.readlines())
+    users = map(lambda s: s.strip(), input_file.readlines())
     return list(users)
 
 
@@ -136,9 +136,12 @@ def run(user_list_file, namespacefile, start, end, output_format):
             click.echo(' |-')
             click.echo(' | {}'.format(user))
             for key in namespaces_edit_weights:
-                click.echo(' | {}'.format(users_data[user][key]))
-            click.echo(' | {}'.format(users_data[user]['NewPages']))
-            click.echo(' | {}'.format(users_data[user]['VotePower']))
+                click.echo(' | style="text-align: right;" | {}'.format(
+                    users_data[user][key]))
+            click.echo(' | style="text-align: right;" | {}'.format(
+                users_data[user]['NewPages']))
+            click.echo(' | style="text-align: right;" | {:.4}'.format(
+                users_data[user]['VotePower']))
             click.echo(' | ?')
         click.echo(' |}')
     else:
@@ -147,7 +150,8 @@ def run(user_list_file, namespacefile, start, end, output_format):
             for key in namespaces_edit_weights:
                 click.echo('N{}: {}'.format(key, users_data[user][key]))
             click.echo('NewPages: {}'.format(users_data[user]['NewPages']))
-            click.echo('VotePower: {}'.format(users_data[user]['VotePower']))
+            click.echo(
+                'VotePower: {:.4}'.format(users_data[user]['VotePower']))
             click.echo('')
 
 
