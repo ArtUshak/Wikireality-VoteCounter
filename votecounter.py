@@ -12,8 +12,14 @@ import settings
 
 
 def get_user_contributions_count(user, start_date, end_date, namespace):
-    """Run bot."""
+    """
+    Get edit count and new page count.
+
+    Get edit count and new page count for user, namespace and timespan.
+    Return tuple of edit count and new page count.
+    """
     user_contributions_count = 0
+    user_pages_count = 0
 
     while True:
         params = {
@@ -34,14 +40,17 @@ def get_user_contributions_count(user, start_date, end_date, namespace):
             # raise MediaWikiAPIError()
             raise Exception()
         data = r.json()
-        user_contributions_count += len(data['query']['usercontribs'])
+        contribs = data['query']['usercontribs']
+        user_pages_count += len(list(filter(lambda edit: 'new' in edit,
+                                            contribs)))
+        user_contributions_count += len(contribs)
         if 'query-continue' not in data:
             break
         start_date = datetime.datetime.strptime(
             data['query-continue']['usercontribs']['ucstart'],
             '%Y-%m-%dT%H:%M:%SZ')
 
-    return user_contributions_count
+    return (user_contributions_count, user_pages_count)
 
 
 def read_user_data(input_file):
@@ -77,22 +86,36 @@ def run(user_list_file, namespacefile, start, end, output_format):
     namespaces_raw = json.load(namespacefile)
     if not isinstance(namespaces_raw, dict):
         raise ValueError()
-    namespaces = dict(map(lambda key: (int(key), namespaces_raw[key]),
-                          namespaces_raw))
+    namespaces_edit_weights = namespaces_raw['edit_weights']
+    namespaces_edit_weights = dict(
+        map(lambda key: (int(key), namespaces_edit_weights[key]),
+            namespaces_edit_weights))
+    namespaces_page_weights = namespaces_raw['page_weights']
+    namespaces_page_weights = dict(
+        map(lambda key: (int(key), namespaces_page_weights[key]),
+            namespaces_page_weights))
 
     users_data = dict()
     for user in users:
         user_vote_power = 0.0
+        user_new_pages = 0
         user_data = dict()
-        for namespace in namespaces:
-            user_contributions_count = get_user_contributions_count(
-                user, start, end,
-                namespace)
+        for namespace in namespaces_edit_weights:
+            (user_contributions_count, user_pages_count) = (
+                get_user_contributions_count(
+                    user, start, end,
+                    namespace))
+            if namespace in namespaces_page_weights:
+                user_vote_power += (user_pages_count
+                                    * namespaces_page_weights[namespace])
+                user_new_pages += user_pages_count
             user_data[namespace] = user_contributions_count
             user_vote_power += (user_contributions_count
-                                * namespaces[namespace])
+                                * namespaces_edit_weights[namespace])
+        user_data['NewPages'] = user_new_pages
         user_data['VotePower'] = user_vote_power
         users_data[user] = copy.copy(user_data)
+
     if format == 'txt':
         for user in users_data:
             click.echo('User {}\n'.format(user))
@@ -100,26 +123,31 @@ def run(user_list_file, namespacefile, start, end, output_format):
                 click.echo('{}: {}\n'.format(key, user_data[key]))
             click.echo('\n')
     elif output_format == 'json':
-        print(json.dumps(users_data))
+        click.echo(json.dumps(users_data))
     elif output_format == 'mediawiki':
         click.echo('{| class="wikitable"')
         click.echo(' ! Участник')
-        for namespace in namespaces:
+        for namespace in namespaces_edit_weights:
             click.echo(' ! N{}'.format(namespace))
+        click.echo(' ! A')
         click.echo(' ! Сила голоса (автоматическая)')
         click.echo(' ! Сила голоса (итоговая)')
         for user in users_data:
             click.echo(' |-')
             click.echo(' | {}'.format(user))
-            for key in users_data[user]:
+            for key in namespaces_edit_weights:
                 click.echo(' | {}'.format(users_data[user][key]))
+            click.echo(' | {}'.format(users_data[user]['NewPages']))
+            click.echo(' | {}'.format(users_data[user]['VotePower']))
             click.echo(' | ?')
         click.echo(' |}')
     else:
         for user in users_data:
             click.echo('User {}'.format(user))
-            for key in users_data[user]:
+            for key in namespaces_edit_weights:
                 click.echo('N{}: {}'.format(key, users_data[user][key]))
+            click.echo('NewPages: {}'.format(users_data[user]['NewPages']))
+            click.echo('VotePower: {}'.format(users_data[user]['VotePower']))
             click.echo('')
 
 
