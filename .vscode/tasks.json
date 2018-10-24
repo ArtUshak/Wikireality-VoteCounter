@@ -10,7 +10,7 @@
         {
             "label": "run",
             "type": "shell",
-            "command": "pipenv run python votecounter.py run --start 2018-07-12 --end 2018-10-12 ../Wikireality-VoteCounter-data/voters.txt",
+            "command": "pipenv run python votecounter.py run --start 2018-07-12 --end 2018-10-12 ../Wikireality-VoteCounter-data/voters.txt > ../Wikireality-VoteCounter-data/output.txt",
             "problemMatcher": []
         },
     ]
