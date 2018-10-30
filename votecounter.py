@@ -149,7 +149,7 @@ def run(user_list_file, namespacefile, start, end, output_format):
         click.echo(' ! Сила голоса (итоговая)')
         for user in users_data:
             click.echo(' |-')
-            click.echo(' | {}'.format(user))
+            click.echo(' | {{{{ U|{} }}}}'.format(user))
             for key in namespaces_edit_weights:
                 click.echo(' | style="text-align: right;" | {}'.format(
                     users_data[user][key]))
@@ -157,7 +157,7 @@ def run(user_list_file, namespacefile, start, end, output_format):
                 users_data[user]['NewPages']))
             click.echo(' | style="text-align: right;" | {:.4}'.format(
                 users_data[user]['VotePower']))
-            click.echo(' | ?')
+            click.echo(' | style="text-align: right;" | ?')
         click.echo(' |}')
     else:
         for user in users_data:
