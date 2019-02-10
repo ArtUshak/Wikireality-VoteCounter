@@ -77,15 +77,15 @@ Ssr
 
 Settings are stored in `settings.py` file.
 
-* `api_url` Wiki API URL
-* `api_uc_limit` API limit
-* `redirect_regex_text` Regular expression text for checking new page description for redirect creation.
+*   `api_url` Wiki API URL
+*   `api_uc_limit` API limit
+*   `redirect_regex_text` Regular expression text for checking new page description for redirect creation.
 
 ## Notes
 
-* Redirects are not counted as new pages.
+*   Redirects are not counted as new pages.
 
 ## Special thanks
 
-* [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) developers
-* [Wikireality](http://wikireality.ru) users, especially members of Dimetr's Telegram chat.
+*   [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) developers
+*   [Wikireality](http://wikireality.ru) users, especially members of Dimetr's Telegram chat.

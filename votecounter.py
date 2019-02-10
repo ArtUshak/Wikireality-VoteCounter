@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """MediaWiki bot for counting vote power from user contributions."""
 import copy
-import datetime
 import json
 import re
 

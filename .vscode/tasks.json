@@ -18,6 +18,6 @@
             "type": "shell",
             "command": "pipenv run python votecounter.py run --start 2017-07-10 --end 2017-10-10 ../Wikireality-VoteCounter-data/voters-old.txt > ../Wikireality-VoteCounter-data/output-old.txt",
             "problemMatcher": []
-        },
+        }
     ]
 }
