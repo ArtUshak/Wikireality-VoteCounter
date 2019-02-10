@@ -173,5 +173,4 @@ cli.add_command(run)
 
 
 if __name__ == '__main__':
-    """Run command line."""
     cli()
